@@ -7,7 +7,7 @@ from sqlalchemy import *
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
-# from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 
 app = Flask(__name__)
@@ -18,10 +18,14 @@ CORS(app)
 
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 # Define models
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     phone_no = db.Column(db.String(11))
@@ -51,12 +55,15 @@ class Orderdetails(db.Model):
     complete = db.Column(db.String(10))
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-
-'''
 
 @app.route('/faq')
 def faq():
@@ -67,12 +74,11 @@ def faq():
 def login():
     if request.method == 'POST':
 
-        users = mongo.db.users
-        global login_user
-        login_user = users.find_one({'phone_no': request.form['phone_no']})
+        user = User.query.filter_by(phone_no=request.form['phone_no']).first()
 
-        if login_user:
-            if request.form['password'] == login_user['password']:
+        if user:
+            if request.form['password'] == user.password:
+                login_user(user)
 
                 return redirect(url_for('orders'))  # orders()
         return 'Invalid username/password combination'
@@ -84,16 +90,15 @@ def login():
 def login_admin():
     if request.method == 'POST':
 
-        admins = mongo.db.admins
-        login_admin = admins.find_one({'phone_no': request.form['phone_no']})
+        admin = Admin.query.filter_by(
+            phone_no=request.form['phone_no']).first()
 
-        if login_admin:
-            if request.form['password'] == login_admin['password']:
+        if admin:
+            if request.form['password'] == admin.password:
 
-                return redirect(url_for('admin'))  # orders()
+                return redirect(url_for('admin'))
         return 'Invalid username/password combination'
     return render_template('admin_login.html')
-'''
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -118,11 +123,12 @@ def signup():
 
 
 @app.route('/orders', methods=['POST', 'GET'])
+@login_required
 def orders():
     if request.method == 'POST':
 
-        name = "Newtonnn"  # login_user['name']
-        phone_no = "0770000000"  # login_user['phone_no']
+        name = current_user.name  # login_user['name']
+        phone_no = current_user.phone_no  # login_user['phone_no']
         order_type = request.form['order_type']
         brand = request.form['brand']
         size = request.form['size']
@@ -139,10 +145,9 @@ def orders():
         db.session.commit()
         return render_template('order_confirmation.html')
 
-    return render_template('orders.html')
+    return render_template('orders.html', name=current_user.name)
 
 
-'''
 @app.route('/complete_order_in_admin/<theid>', methods=['PUT', 'GET', 'POST'])
 def complete_order_in_admin(theid):
     idd = theid
@@ -189,8 +194,9 @@ def complete_order_in_pending(theid):
 
 
 @app.route('/confirm_order')
+@login_required
 def confirm():
-    return render_template('order_confirmation.html')
+    return render_template('order_confirmation.html', name=current_user.name)
 
 
 @app.route('/about')
@@ -200,9 +206,8 @@ def about_us():
 
 @app.route('/admin,,,')
 def admin():
-    orderdetails = mongo.db.orderdetails
 
-    all_orders = orderdetails.find({}).sort([['_id', -1]])
+    all_orders = Orderdetails.query.all()
 
     return render_template('admin.html', orders=all_orders)
 
@@ -230,7 +235,14 @@ def filter():
     filtered_orders = orderdetails.find({"time_placed": date})
     print(filtered_orders)
     return render_template('filter.html')
-'''
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
