@@ -1,0 +1,80 @@
+{% extends 'base.html' %} {% block head %}
+<title>Orders</title>
+{% endblock %} {% block body %}
+<br />
+
+<br />
+<main role="main">
+  <div class="jumbotron">
+    <div class="col-sm-8 mx-auto">
+      <label><b>Order placement page</b></label>
+      <form
+        method="POST"
+        onsubmit="return confirm('Are you sure you have provided correct order details?');"
+      >
+        <div class="form-group">
+          <select class="form-control" name="order_type" required>
+            <option value="">Order Type</option>
+            <option>Purchase</option>
+            <option>Refill</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <select class="form-control" name="brand" required>
+            <option value="">Brand/Type</option>
+            <option>Total</option>
+            <option>K-Gas</option>
+            <option>Afrigas</option>
+            <option>Hass</option>
+            <option>Pro-Gas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <select
+            class="form-control"
+            name="size"
+            placeholder="Size/Weight"
+            required
+          >
+            <option value="">Size/Weight</option>
+            <option>6kg</option>
+            <option>13kg</option>
+            <option>3kg</option>
+          </select>
+        </div>
+
+        <div>
+          <input
+            class="form-control"
+            name="gate_region"
+            type="text"
+            placeholder="Gate or Region"
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            class="form-control"
+            name="apartment"
+            type="text"
+            placeholder="Apartment"
+            required
+          />
+        </div>
+
+        <br />
+
+        <button type="submit" class="btn btn-primary" formmethod="post">
+          Submit Order
+        </button>
+
+        <br />
+        <br />
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block head %}
+<title>Login</title>
+{% endblock %} {% block body %}
+<br />
+
+<br />
+<main role="main">
+  <div class="jumbotron">
+    <div class="col-sm-8 mx-auto">
+      <label><b>Please sign in</b></label>
+      <form method="POST">
+        <div class="form-group">
+          <input
+            class="form-control"
+            id="phone_no"
+            name="phone_no"
+            placeholder="Phone Number"
+          />
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Password"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary" formmethod="post">
+          Login
+        </button>
+
+        <br />
+        <br />
+
+        <small id="emailHelp" class="form-text text-muted"
+          >Don't have an account? <a href="/signup">Sign Up</a>
+        </small>
+      </form>
+    </div>
+  </div>
+</main>
+
+<div class="d-flex justify-content-center">
+  <img src="{{url_for('static', filename='Total_Gas.png')}}" />
+  <img src="{{url_for('static', filename='hass.png')}}" />
+  <img src="{{url_for('static', filename='hashi.png')}}" />
+  <img src="{{url_for('static', filename='kgas.png')}}" />
+</div>
+
+{% endblock %}

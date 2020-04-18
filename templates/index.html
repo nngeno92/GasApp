@@ -1,0 +1,43 @@
+{% extends 'base.html' %} {% block head %}
+<title>Home</title>
+{% endblock %} {% block body %}
+<br />
+
+<br />
+<main role="main" class="container-fluid">
+  <div class="jumbotron">
+    <div class="col-sm-8 mx-auto">
+      <h1>Welcome to Kericho Gas Deliveries</h1>
+      <p>
+        Our main goal is to make it easy for the people of this great town to
+        purchase, replace or refill gas cylinders and to acquire all gas related
+        accessories.
+      </p>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a class="btn btn-primary btn-lg" href="/login" role="button"
+      >Place an Order &raquo;</a
+    >
+  </div>
+  <br />
+  <br />
+
+  <div class="d-flex justify-content-center">
+    <img src="{{url_for('static', filename='kgas1.jpg')}}" />
+    <img src="{{url_for('static', filename='pro-1.jpeg')}}" />
+    <img src="{{url_for('static', filename='nationoil.png')}}" />
+    <img src="{{url_for('static', filename='afrigas-1.jpg')}}" />
+  </div>
+</main>
+<hr />
+
+<p class="text-right">
+  <small class="text-right"
+    ><a class="text-right" href="/admin_login"
+      >Thank you for visiting our page</a
+    ></small
+  >
+</p>
+{% endblock %}
