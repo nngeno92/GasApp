@@ -1,14 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
 from flask_sqlalchemy import SQLAlchemy
-
 from bson.objectid import ObjectId
 from datetime import datetime, date, time
 from sqlalchemy import *
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended import (create_access_token)
 from werkzeug.security import generate_password_hash, check_password_hash
 # from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -98,6 +95,7 @@ def login_admin():
     return render_template('admin_login.html')
 '''
 
+
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
@@ -142,6 +140,7 @@ def orders():
         return render_template('order_confirmation.html')
 
     return render_template('orders.html')
+
 
 '''
 @app.route('/complete_order_in_admin/<theid>', methods=['PUT', 'GET', 'POST'])
