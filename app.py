@@ -224,21 +224,25 @@ def filter_by(something):
 
     if criteria == "order_type":
         value = request.form['order_type']
-        by_order_type = Orderdetails.query.filter_by(order_type=value)
+        by_order_type = Orderdetails.query.filter_by(
+            order_type=value).order_by(desc(Orderdetails.id))
         return render_template('filter.html', orders=by_order_type)
     elif criteria == "gate":
         value = request.form['gate']
-        by_gate = Orderdetails.query.filter_by(gate_region=value)
+        by_gate = Orderdetails.query.filter_by(
+            gate_region=value).order_by(desc(Orderdetails.id))
         return render_template('filter.html', orders=by_gate)
     elif criteria == "phone_no":
         value = request.form['phone_no']
-        by_phone_no = Orderdetails.query.filter_by(phone_no=value)
+        by_phone_no = Orderdetails.query.filter_by(
+            phone_no=value).order_by(desc(Orderdetails.id))
 
         return render_template('filter.html', orders=by_phone_no)
 
     elif criteria == "date":
         value = request.form['date']
-        by_date = Orderdetails.query.filter_by(date_placed=value)
+        by_date = Orderdetails.query.filter_by(
+            date_placed=value).order_by(desc(Orderdetails.id))
         return render_template('filter.html', orders=by_date)
     else:
         pass
