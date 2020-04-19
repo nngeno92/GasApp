@@ -20,7 +20,8 @@
                 <th scope="col">Order Type</th>
                 <th scope="col">Brand</th>
                 <th scope="col">Size</th>
-                <th scope="col">Location</th>
+                <th scope="col">Gate/Region</th>
+                <th scope="col">Apartment</th>
                 <th scope="col">Time Placed</th>
                 <th scope="col">Complete</th>
               </tr>
@@ -33,7 +34,8 @@
                 <td>{{order.order_type}}</td>
                 <td>{{order.brand}}</td>
                 <td>{{order.size}}</td>
-                <td>{{order.location}}</td>
+                <td>{{order.gate_region}}</td>
+                <td>{{order.apartment}}</td>
                 <td>{{order.time_placed}}</td>
                 <td>{{order.complete}}</td>
 
@@ -41,8 +43,8 @@
                 <td>
                   <a
                     type="button"
-                    value="{{order._id}}"
-                    href="/complete_order_in_latest/{{order._id}}"
+                    value="{{order.id}}"
+                    href="/complete_order_in_latest/{{order.id}}"
                     class="btn btn-success btn-sm"
                   >
                     Complete

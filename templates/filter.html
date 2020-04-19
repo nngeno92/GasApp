@@ -54,8 +54,159 @@
     </nav>
 
     <div class="container">
-      <p>Content of the container</p>
+      <div class="imgWrap d-inline-block">
+        <form action="/filterby/date" method="POST">
+          <div class="form-row">
+            <small><b>Filter by Date:</b></small>
+            <div class="col-sm-3 my-1">
+              <input
+                type="text"
+                class="form-control"
+                id="inlineFormInputName"
+                name="date"
+                placeholder="Enter Date"
+              />
+            </div>
+
+            <div class="col-auto my-1">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                value="date"
+                href="/filterby/date/value"
+              >
+                Filter
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="imgWrap d-inline-block">
+        <form action="/filterby/phone_no" method="POST">
+          <div class="form-row">
+            <small><b>Filter by Customer:</b></small>
+            <div class="col-sm-3 my-1">
+              <input
+                type="text"
+                class="form-control"
+                id="inlineFormInputName"
+                name="phone_no"
+                placeholder="Phone No"
+              />
+            </div>
+
+            <div class="col-auto my-1">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                value="phone_no"
+                href="/filterby/phone_no/value"
+              >
+                Filter
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="imgWrap d-inline-block">
+        <form action="/filterby/gate" method="POST">
+          <div class="form-row">
+            <small><b>Filter by Gate:</b></small>
+            <div class="col-sm-3 my-1">
+              <input
+                type="text"
+                class="form-control"
+                id="inlineFormInputName"
+                name="gate"
+                placeholder="Gate/Region"
+              />
+            </div>
+
+            <div class="col-auto my-1">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                value="gate"
+                href="/filterby/gate/value"
+              >
+                Filter
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="imgWrap d-inline-block">
+        <form action="/filterby/order_type" method="POST">
+          <div class="form-row">
+            <small><b>Filter by Order Type:</b></small>
+            <div class="col-sm-3 my-1">
+              <input
+                type="text"
+                class="form-control"
+                id="inlineFormInputName"
+                name="order_type"
+                placeholder="OrderType"
+              />
+            </div>
+
+            <div class="col-auto my-1">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                value="order_type"
+                href="/filterby/order_type/value"
+              >
+                Filter
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+
+    <main role="main">
+      <div class="jumbotron">
+        <div class="col-sm-8 mx-auto">
+          <div class="table-responsive-lg">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Phone Number</th>
+                  <th scope="col">Order Type</th>
+                  <th scope="col">Brand</th>
+                  <th scope="col">Size</th>
+                  <th scope="col">Gate/Region</th>
+                  <th scope="col">Apartment</th>
+                  <th scope="col">Date Placed</th>
+                  <th scope="col">Time Placed</th>
+                  <th scope="col">Complete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                <tr>
+                  <td>{{ order.name }}</td>
+                  <td>{{ order.phone_no }}</td>
+                  <td>{{order.order_type}}</td>
+                  <td>{{order.brand}}</td>
+                  <td>{{order.size}}</td>
+                  <td>{{order.gate_region}}</td>
+                  <td>{{order.apartment}}</td>
+                  <td>{{order.date_placed}}</td>
+                  <td>{{order.time_placed.strftime('%H:%M')}}</td>
+                  <td>{{order.complete}}</td>
+                </tr>
+                {% endfor%}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
 
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
