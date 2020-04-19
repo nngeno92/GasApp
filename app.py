@@ -12,7 +12,19 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/jujaappdb'
+ENV = 'dev'
+
+if ENV == 'dev':
+    app.debug = True
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/jujaappdb'
+else:
+    app.debug = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://aiyojcupswwjbi:c3164edbe22c2ecf761e478f02f9582b8e84a18aeb56df5e31676664fc20b693@ec2-18-233-137-77.compute-1.amazonaws.com:5432/d1c2d30aj8hpli'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
 app.config['SECRET_KEY'] = '512104013N'
 CORS(app)
 
@@ -256,4 +268,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=True)
+    app.run(port=5001)
