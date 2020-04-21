@@ -12,7 +12,19 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/jujaappdb'
+ENV = 'prod'
+
+if ENV == 'dev':
+    app.debug = True
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/jujaappdb'
+else:
+    app.debug = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://aiyojcupswwjbi:c3164edbe22c2ecf761e478f02f9582b8e84a18aeb56df5e31676664fc20b693@ec2-18-233-137-77.compute-1.amazonaws.com:5432/d1c2d30aj8hpli'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
 app.config['SECRET_KEY'] = '512104013N'
 CORS(app)
 
@@ -152,29 +164,20 @@ def orders():
 def complete_order_in_admin(theid):
     idd = theid
 
-    orderdetails = mongo.db.orderdetails
-    orderdetails.find_one_and_update(
-        {"_id": ObjectId(idd)},
-        {"$set":
-         {"complete": "Completed"}
-         }, upsert=True
-    )
-    print(request.url)
+    Orderdetails.query.filter_by(id=idd).update(
+        {Orderdetails.complete: "Completed"})
+    db.session.commit()
+
     return redirect(url_for('admin'))
 
 
 @app.route('/complete_order_in_latest/<theid>', methods=['PUT', 'GET', 'POST'])
 def complete_order_in_latest(theid):
     idd = theid
+    Orderdetails.query.filter_by(id=idd).update(
+        {Orderdetails.complete: "Completed"})
+    db.session.commit()
 
-    orderdetails = mongo.db.orderdetails
-    orderdetails.find_one_and_update(
-        {"_id": ObjectId(idd)},
-        {"$set":
-         {"complete": "Completed"}
-         }, upsert=True
-    )
-    print(request.url)
     return redirect(url_for('latest_orders'))
 
 
@@ -182,14 +185,9 @@ def complete_order_in_latest(theid):
 def complete_order_in_pending(theid):
     idd = theid
 
-    orderdetails = mongo.db.orderdetails
-    orderdetails.find_one_and_update(
-        {"_id": ObjectId(idd)},
-        {"$set":
-         {"complete": "Completed"}
-         }, upsert=True
-    )
-    print(request.url)
+    Orderdetails.query.filter_by(id=idd).update(
+        {Orderdetails.complete: "Completed"})
+    db.session.commit()
     return redirect(url_for('pending_orders'))
 
 
@@ -207,34 +205,59 @@ def about_us():
 @app.route('/admin,,,')
 def admin():
 
-    all_orders = Orderdetails.query.all()
+    all_orders = Orderdetails.query.order_by(desc(Orderdetails.id))
 
     return render_template('admin.html', orders=all_orders)
 
 
 @app.route('/latest_orders')
 def latest_orders():
-    orderdetails = mongo.db.orderdetails
-    latest_orders = orderdetails.find({}, limit=5).sort([['_id', -1]])
+    latest_orders = Orderdetails.query.order_by(desc(Orderdetails.id)).limit(5)
     return render_template('latest_orders.html', orders=latest_orders)
 
 
 @app.route('/pending_orders')
 def pending_orders():
-    orderdetails = mongo.db.orderdetails
-    pending_orders = orderdetails.find(
-        {"complete": "Pending"}).sort([['_id', -1]])
+
+    pending_orders = Orderdetails.query.filter_by(
+        complete='Pending').order_by(desc(Orderdetails.id))
     return render_template('pending_orders.html', orders=pending_orders)
 
 
 @app.route('/filter')
 def filter():
-    date = datetime.now().isoformat(timespec='seconds')
-    print(date)
-    orderdetails = mongo.db.orderdetails
-    filtered_orders = orderdetails.find({"time_placed": date})
-    print(filtered_orders)
+
     return render_template('filter.html')
+
+
+@app.route('/filterby/<something>', methods=['POST'])
+def filter_by(something):
+    criteria = something
+
+    if criteria == "order_type":
+        value = request.form['order_type']
+        by_order_type = Orderdetails.query.filter_by(
+            order_type=value).order_by(desc(Orderdetails.id))
+        return render_template('filter.html', orders=by_order_type)
+    elif criteria == "gate":
+        value = request.form['gate']
+        by_gate = Orderdetails.query.filter_by(
+            gate_region=value).order_by(desc(Orderdetails.id))
+        return render_template('filter.html', orders=by_gate)
+    elif criteria == "phone_no":
+        value = request.form['phone_no']
+        by_phone_no = Orderdetails.query.filter_by(
+            phone_no=value).order_by(desc(Orderdetails.id))
+
+        return render_template('filter.html', orders=by_phone_no)
+
+    elif criteria == "date":
+        value = request.form['date']
+        by_date = Orderdetails.query.filter_by(
+            date_placed=value).order_by(desc(Orderdetails.id))
+        return render_template('filter.html', orders=by_date)
+    else:
+        pass
 
 
 @app.route('/logout')
@@ -245,4 +268,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5001)

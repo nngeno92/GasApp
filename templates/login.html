@@ -1,5 +1,24 @@
 {% extends 'base.html' %} {% block head %}
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  .column {
+    float: left;
+    width: 25%;
+    padding: 5px;
+  }
+
+  /* Clearfix (clear floats) */
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+</style>
 <title>Login</title>
+
 {% endblock %} {% block body %}
 <br />
 
@@ -42,11 +61,33 @@
   </div>
 </main>
 
-<div class="d-flex justify-content-center">
-  <img src="{{url_for('static', filename='Total_Gas.png')}}" />
-  <img src="{{url_for('static', filename='hass.png')}}" />
-  <img src="{{url_for('static', filename='hashi.png')}}" />
-  <img src="{{url_for('static', filename='kgas.png')}}" />
+<div class="container-fluid">
+  <div class="row">
+    <div class="column">
+      <img
+        src="{{url_for('static', filename='Total_Gas.png')}}"
+        style="width: 100%;"
+      />
+    </div>
+    <div class="column">
+      <img
+        src="{{url_for('static', filename='hass.png')}}"
+        style="width: 100%;"
+      />
+    </div>
+    <div class="column">
+      <img
+        src="{{url_for('static', filename='hashi.png')}}"
+        style="width: 100%;"
+      />
+    </div>
+    <div class="column">
+      <img
+        src="{{url_for('static', filename='kgas.png')}}"
+        style="width: 100%;"
+      />
+    </div>
+  </div>
 </div>
 
 {% endblock %}
