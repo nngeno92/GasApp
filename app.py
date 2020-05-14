@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response
 import os
-from flask_sqlalchemy import SQLAlchemy
-from bson.objectid import ObjectId
+from flask_sqlalchemy import SQLAlchemy, functools
+#from bson.objectid import ObjectId
 from datetime import datetime, date, time
 from sqlalchemy import *
 from flask_cors import CORS
@@ -12,12 +12,12 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/jujaappdb'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/gasapidb'
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://aiyojcupswwjbi:c3164edbe22c2ecf761e478f02f9582b8e84a18aeb56df5e31676664fc20b693@ec2-18-233-137-77.compute-1.amazonaws.com:5432/d1c2d30aj8hpli'
@@ -266,6 +266,43 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+#Endpoints for the api
+
+@app.route('/api/orders', methods=['POST', 'GET'])
+def api_orders():
+    if request.method == 'POST':
+
+        order_data = request.get_json()
+        
+
+        time_placed = func.current_timestamp()
+        new_order = Orderdetails(name=order_data['name'], phone_no=order_data['phone_no'], order_type=order_data['order_type'], brand=order_data['brand'], size=order_data['size'],
+                                 gate_region=order_data['gate_region'], apartment=order_data['apartment'], date_placed=date.today(), time_placed=time_placed, complete="Pending")
+        db.session.add(new_order)
+        db.session.commit()
+        return jsonify({'message' : "Order placed!"})
+
+    elif request.method == 'GET':
+        orders = Orderdetails.query.all()
+
+        output = []
+
+        for order in orders:
+            order_data = {}
+            order_data['name'] = order.name
+            order_data['phone_no'] = order.phone_no
+            order_data['order_type'] = order.order_type
+            order_data['brand'] = order.brand
+            order_data['size'] = order.size
+            order_data['gate_region'] = order.gate_region
+            order_data['apartment'] = order.apartment
+            order_data['date_placed'] = order.date_placed
+            
+            order_data['complete'] = order.complete
+            output.append(order_data)
+
+        return jsonify({'orders' : output})
+
 
 if __name__ == "__main__":
-    app.run(port=5001)
+    app.run()
