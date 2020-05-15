@@ -12,7 +12,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 
-ENV = 'dev'
+ENV = 'prod'
 
 if ENV == 'dev':
     app.debug = True
@@ -20,7 +20,7 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:512104013N@localhost/gasapidb'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://aiyojcupswwjbi:c3164edbe22c2ecf761e478f02f9582b8e84a18aeb56df5e31676664fc20b693@ec2-18-233-137-77.compute-1.amazonaws.com:5432/d1c2d30aj8hpli'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://wfqtyftybqcbno:5c9e8c395e6497c55462194b5c37e097213125ec8992374c8106c7fae94c4005@ec2-52-44-166-58.compute-1.amazonaws.com:5432/d57mm50mhhl8ko'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
