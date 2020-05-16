@@ -9,10 +9,11 @@ from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+import prices as Prices
 
 app = Flask(__name__)
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
@@ -280,7 +281,17 @@ def api_orders():
                                  gate_region=order_data['gate_region'], apartment=order_data['apartment'], date_placed=date.today(), time_placed=time_placed, complete="Pending")
         db.session.add(new_order)
         db.session.commit()
-        return jsonify({'message' : "Order placed!"})
+        
+        # Fetching the price for the particular order
+        order_type=order_data['order_type']
+        brand=order_data['brand']
+        size=order_data['size']
+
+        price = Prices.fetch_price(order_type,brand,size)
+
+
+        return jsonify(message="Order placed!",  
+                       price = price)
 
     elif request.method == 'GET':
         orders = Orderdetails.query.all()
