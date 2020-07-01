@@ -8,8 +8,8 @@ from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from Orders import order_placement, get_orders
 
-import prices as Prices
 
 app = Flask(__name__)
 
@@ -55,7 +55,8 @@ class Admin(db.Model):
 
 
 class Orderdetails(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer)
+    order_no = db.Column(db.String(20), primary_key=True)
     name = db.Column(db.String(50))
     phone_no = db.Column(db.String(11))
     order_type = db.Column(db.String(10))
@@ -63,8 +64,8 @@ class Orderdetails(db.Model):
     size = db.Column(db.String(10))
     gate_region = db.Column(db.String(20))
     apartment = db.Column(db.String(20))
-    time_placed = db.Column(db.Time())
-    date_placed = db.Column(db.Date())
+    time_placed = db.Column(db.String(20))
+    date_placed = db.Column(db.String(30))
     complete = db.Column(db.String(10))
 
 
@@ -274,45 +275,24 @@ def api_orders():
     if request.method == 'POST':
 
         order_data = request.get_json()
-        
+        response = order_placement.place_order(order_data, db, Orderdetails)
 
-        time_placed = func.current_timestamp()
-        new_order = Orderdetails(name=order_data['name'], phone_no=order_data['phone_no'], order_type=order_data['order_type'], brand=order_data['brand'], size=order_data['size'],
-                                 gate_region=order_data['gate_region'], apartment=order_data['apartment'], date_placed=date.today(), time_placed=time_placed, complete="Pending")
-        db.session.add(new_order)
-        db.session.commit()
-        
-        # Fetching the price for the particular order
-        order_type=order_data['order_type']
-        brand=order_data['brand']
-        size=order_data['size']
-
-        price = Prices.fetch_price(order_type,brand,size)
-
-
-        return jsonify(message="Order placed!",  
-                       price = price)
+        return jsonify(message=response[0],  
+                       price = response[1])
 
     elif request.method == 'GET':
         orders = Orderdetails.query.all()
 
-        output = []
+        orders_array = get_orders.get_orders(orders)
+        return jsonify({'orders' : orders_array})
 
-        for order in orders:
-            order_data = {}
-            order_data['name'] = order.name
-            order_data['phone_no'] = order.phone_no
-            order_data['order_type'] = order.order_type
-            order_data['brand'] = order.brand
-            order_data['size'] = order.size
-            order_data['gate_region'] = order.gate_region
-            order_data['apartment'] = order.apartment
-            order_data['date_placed'] = order.date_placed
-            
-            order_data['complete'] = order.complete
-            output.append(order_data)
-
-        return jsonify({'orders' : output})
+@app.route('/api/get_price', methods=['POST'])
+def get_price():
+    order_data = request.get_json()
+    response = order_placement.get_price(order_data)
+    
+    return jsonify(message=response[0],  
+                       price = response[1])
 
 
 if __name__ == "__main__":
