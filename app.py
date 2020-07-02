@@ -9,6 +9,7 @@ from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from Orders import order_placement, get_orders
+import redis
 
 
 app = Flask(__name__)
@@ -30,6 +31,8 @@ app.config['SECRET_KEY'] = '512104013N'
 CORS(app)
 
 db = SQLAlchemy(app)
+
+RedisDB = redis.StrictRedis(host="localhost", port=6379, db=1)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -275,7 +278,7 @@ def api_orders():
     if request.method == 'POST':
 
         order_data = request.get_json()
-        response = order_placement.place_order(order_data, db, Orderdetails)
+        response = order_placement.place_order(order_data, db, Orderdetails, RedisDB)
 
         return jsonify(message=response[0],  
                        price = response[1])
